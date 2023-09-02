@@ -214,8 +214,8 @@
             <thead>
                 <tr>
                     <th>Giai đoạn</th>
-                    <th>Tổng thu nhập (triệu VNĐ)</th>
-                    <th>Thuế thu nhập (triệu VNĐ)</th>
+                    <th>Khoản tiền tính thuế( VNĐ)</th>
+                    <th>Tiền thuế( VNĐ)</th>
                 </tr>
             </thead>
             <tbody id="giatritunggiaidoanthue">
@@ -227,22 +227,50 @@
             </div>
 
             <h5 class="container py-2">BÀI TẬP 4: TÍNH TIỀN CÁP</h3>
-                <div class="container px-1">
-                  <div class="form-group">
-                    <h6 class="container">Nhập vào thông tin thu nhập chịu thuế</h3>
-                    <label for=""></label>
-                    
-                    <input
-                      type="number"
-                      name=""
-                      id=""
-                      class="form-control"
-                      placeholder=""
-                      aria-describedby="helpId"
-                    />          
-                    <button class="btn btn-info" id="tinhtiencap">Tính tiền cáp</button> <span id="ketquatinhtiencap"></span>
-                  </div>
-                </div>
+                <form class="container">
+                    <label for="maKhachHang">Mã khách hàng:</label>
+                    <input type="text" id="maKhachHang" name="maKhachHang"><br><br>
+                
+                    <label for="loaiKhachHang">Loại khách hàng:</label>
+                    <select id="loaiKhachHang" name="loaiKhachHang" onchange="toggleSoKetNoi()">
+                      <option value="nhaDan">Nhà dân</option>
+                      <option value="doanhNghiep">Doanh nghiệp</option>
+                    </select><br><br>
+                
+                    <label for="soKetNoi">Số kết nối:</label>
+                    <input type="number" id="soKetNoi" name="soKetNoi" disabled><br><br>
+                
+                    <label for="soKenhCaoCap">Số kênh cao cấp:</label>
+                    <input type="number" id="soKenhCaoCap" name="soKenhCaoCap"><br><br>
+                
+                    <button class="btn btn-info" type="button" onclick="tinhHoaDon()">Tính hóa đơn</button>
+                    <h3>Kết quả:</h3>
+                    <p id="ketQua"></p>
+                    <h3>Chi tiết hóa đơn:</h3>
+                    <table border="1">
+                      <tr>
+                        <th>Mục</th>
+                        <th>Giá</th>
+                      </tr>
+                      <tr>
+                        <td>Phí xử lý hóa đơn</td>
+                        <td id="phiXuLyHoaDon"></td>
+                      </tr>
+                      <tr>
+                        <td>Phí dịch vụ cơ bản</td>
+                        <td id="phiDichVuCoBan"></td>
+                      </tr>
+                      <tr>
+                        <td>Phí thuê kênh cao cấp</td>
+                        <td id="phiKenhCaoCap"></td>
+                      </tr>
+                      <tr>
+                        <td><strong>Tổng hóa đơn</strong></td>
+                        <td id="tongHoaDon"></td>
+                      </tr>
+                    </table>
+                  </form>
+                
                 <br><br><br><br><br><br><br><br><br><br>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

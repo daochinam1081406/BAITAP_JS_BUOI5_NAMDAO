@@ -174,11 +174,26 @@ function tinhtieuthu() {
     cell3.innerHTML = giaiDoan[2];
   });
 }
-
 function tinhthuethunhap() {
   // Lấy giá trị từ các trường input
-  var tongThuNhap = parseFloat(document.getElementById("thunhap").value);
-  var soNguoiPhuThuoc = parseInt(document.getElementById("songuoi").value);
+  var hoten2 = document.getElementById("hoten2");
+  var ketquatinhthue = document.getElementById("ketquatinhthue");
+  if (hoten2.value === "") {
+    ketquatinhthue.innerText = "Vui lòng nhập họ tên";
+    return;
+  }
+  var tongThuNhapT = document.getElementById("thunhap");
+  var tongThuNhap = 0;
+  if (tongThuNhapT.value !== "") tongThuNhap = parseFloat(tongThuNhapT.value);
+  else {
+    ketquatinhthue.innerText = "Vui lòng nhập tổng thu nhập";
+    return;
+  }
+
+  var soNguoiPhuThuocT = document.getElementById("songuoi");
+  var soNguoiPhuThuoc = 0;
+  if (soNguoiPhuThuocT.value !== "")
+    soNguoiPhuThuoc = parseInt(soNguoiPhuThuocT.value);
 
   // Tính thuế thu nhập cá nhân và hiển thị từng giai đoạn trong bảng
   var giatritunggiaidoanTable = document.getElementById(
@@ -186,14 +201,32 @@ function tinhthuethunhap() {
   );
   giatritunggiaidoanTable.innerHTML = ""; // Xóa nội dung cũ
 
-  var thuNhapChiuThue = tongThuNhap - 4 - soNguoiPhuThuoc * 1.6; // Đổi về triệu VNĐ
+  var thuNhapChiuThue = tongThuNhap - 4000000 - soNguoiPhuThuoc * 1600000;
+
+  if (thuNhapChiuThue <= 0) {
+    ketquatinhthue.innerText =
+      "Thu nhập chịu thuế chưa đến mức tính thuế => KHÔNG TÍNH THUẾ";
+    return;
+  }
   var giaTriGiaiDoan = [];
 
   // Các khoảng thuế và thuế suất tương ứng
-  var khoangThue = [60, 120, 210, 384, 624, 960];
+  var khoangThue = [
+    60000000,
+    60000000,
+    90000000,
+    174000000,
+    240000000,
+    336000000,
+    thuNhapChiuThue - 960000000,
+  ];
   var thueSuat = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35];
 
   for (var i = 0; i < khoangThue.length; i++) {
+    if (thuNhapChiuThue <= 0) {
+      break;
+    }
+
     if (thuNhapChiuThue <= khoangThue[i]) {
       var thueTungGiaiDoan = thuNhapChiuThue * thueSuat[i];
       giaTriGiaiDoan.push([
@@ -201,7 +234,7 @@ function tinhthuethunhap() {
         thuNhapChiuThue,
         thueTungGiaiDoan,
       ]);
-      break;
+      thuNhapChiuThue = 0; // Thu nhập chịu thuế đã được tính hết
     } else {
       var thueTungGiaiDoan = khoangThue[i] * thueSuat[i];
       giaTriGiaiDoan.push([
@@ -220,8 +253,8 @@ function tinhthuethunhap() {
     var cell2 = row.insertCell(1);
     var cell3 = row.insertCell(2);
     cell1.innerHTML = giaiDoan[0];
-    cell2.innerHTML = giaiDoan[1].toFixed(2) + " triệu VNĐ"; // Đổi lại triệu VNĐ
-    cell3.innerHTML = giaiDoan[2].toFixed(2) + " triệu VNĐ"; // Đổi lại triệu VNĐ
+    cell2.innerHTML = Math.floor(giaiDoan[1].toFixed(2)) + "  VNĐ";
+    cell3.innerHTML = Math.floor(giaiDoan[2].toFixed(2)) + "  VNĐ"; //
   });
 
   // Tổng thuế thu nhập cá nhân
@@ -230,8 +263,68 @@ function tinhthuethunhap() {
   }, 0);
 
   // Hiển thị kết quả thuế thu nhập
-  document.getElementById("ketquatinhthue").innerText =
+  ketquatinhthue.innerText =
     "Tổng thuế thu nhập cá nhân phải trả: " +
-    tongThueThuNhap.toFixed(2) +
-    " triệu VNĐ";
+    Math.floor(tongThueThuNhap.toFixed(2)) +
+    "  VNĐ";
+}
+
+function toggleSoKetNoi() {
+  var loaiKhachHang = document.getElementById("loaiKhachHang").value;
+  var soKetNoiInput = document.getElementById("soKetNoi");
+
+  if (loaiKhachHang === "doanhNghiep") {
+    soKetNoiInput.disabled = false;
+  } else {
+    soKetNoiInput.disabled = true;
+    soKetNoiInput.value = "";
+  }
+}
+
+function tinhHoaDon() {
+  var maKhachHang = document.getElementById("maKhachHang").value;
+  if (maKhachHang === "") {
+    alert("Vui lòng nhập mã khách hàng trước khi tính hóa đơn.");
+    return;
+  }
+
+  var loaiKhachHang = document.getElementById("loaiKhachHang").value;
+  var soKetNoi = parseInt(document.getElementById("soKetNoi").value) || 0;
+  var soKenhCaoCap =
+    parseInt(document.getElementById("soKenhCaoCap").value) || 0;
+  var phiXuLyHoaDon = 0;
+  var phiDichVuCoBan = 0;
+  var phiKenhCaoCap = 0;
+
+  if (loaiKhachHang === "nhaDan") {
+    phiXuLyHoaDon = 4.5;
+    phiDichVuCoBan = 20.5;
+    phiKenhCaoCap = 7.5 * soKenhCaoCap;
+  } else if (loaiKhachHang === "doanhNghiep") {
+    phiXuLyHoaDon = 15;
+
+    // Kiểm tra số kết nối của doanh nghiệp
+    if (soKetNoi > 10) {
+      phiDichVuCoBan = 75 + (soKetNoi - 10) * 5;
+    } else {
+      phiDichVuCoBan = 75;
+    }
+
+    phiKenhCaoCap = 50 * soKenhCaoCap;
+  }
+
+  var tongHoaDon = phiXuLyHoaDon + phiDichVuCoBan + phiKenhCaoCap;
+
+  // Cập nhật bảng chi tiết hóa đơn
+  document.getElementById("phiXuLyHoaDon").innerText =
+    "$" + phiXuLyHoaDon.toFixed(2);
+  document.getElementById("phiDichVuCoBan").innerText =
+    "$" + phiDichVuCoBan.toFixed(2);
+  document.getElementById("phiKenhCaoCap").innerText =
+    "$" + phiKenhCaoCap.toFixed(2);
+  document.getElementById("tongHoaDon").innerText = "$" + tongHoaDon.toFixed(2);
+
+  // Hiển thị kết quả tổng hóa đơn
+  document.getElementById("ketQua").innerHTML =
+    "Tổng hóa đơn cáp: $" + tongHoaDon.toFixed(2);
 }
